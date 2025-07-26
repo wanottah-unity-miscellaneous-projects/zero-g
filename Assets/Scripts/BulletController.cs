@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 
 public class BulletController : MonoBehaviour
 {
@@ -14,11 +16,16 @@ public class BulletController : MonoBehaviour
 
     public bool damageEnemy, damagePlayer;
 
+
+
+
+
     // Start is called before the first frame update
     void Start()
     {
         
     }
+
 
     // Update is called once per frame
     void Update()
@@ -27,33 +34,37 @@ public class BulletController : MonoBehaviour
 
         lifeTime -= Time.deltaTime;
 
-        if(lifeTime <= 0)
+        if (lifeTime <= 0)
         {
             Destroy(gameObject);
         }
     }
 
+
     private void OnTriggerEnter(Collider other)
     {
-        if(other.gameObject.tag == "Enemy" && damageEnemy)
+        if (other.gameObject.tag == "Enemy" && damageEnemy)
         {
             //Destroy(other.gameObject);
             other.gameObject.GetComponent<EnemyHealthController>().DamageEnemy(damage);
         }
 
-        if(other.gameObject.tag == "Headshot" && damageEnemy)
+        if (other.gameObject.tag == "Headshot" && damageEnemy)
         {
             other.transform.parent.GetComponent<EnemyHealthController>().DamageEnemy(damage * 2);
             Debug.Log("Headshot hit");
         }
 
-        if(other.gameObject.tag == "Player" && damagePlayer)
+        if (other.gameObject.tag == "Player" && damagePlayer)
         {
             //Debug.Log("Hit Player at " + transform.position);
             PlayerHealthController.instance.DamagePlayer(damage);
         }
 
         Destroy(gameObject);
+
         Instantiate(impactEffect, transform.position + (transform.forward * (-moveSpeed * Time.deltaTime)), transform.rotation);
     }
-}
+
+
+} // end of class

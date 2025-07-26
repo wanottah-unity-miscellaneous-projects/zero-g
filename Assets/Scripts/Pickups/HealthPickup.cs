@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 
 public class HealthPickup : MonoBehaviour
 {
@@ -10,7 +12,7 @@ public class HealthPickup : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.tag == "Player" && !isCollected)
+        if (other.tag == "Player" && !isCollected)
         {
             PlayerHealthController.instance.HealPlayer(healAmount);
 
@@ -19,4 +21,6 @@ public class HealthPickup : MonoBehaviour
             AudioManager.instance.PlaySFX(5);
         }
     }
-}
+
+
+} // end of class

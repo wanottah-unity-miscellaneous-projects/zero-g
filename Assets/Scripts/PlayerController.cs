@@ -1,10 +1,13 @@
-﻿using System.Collections;
+﻿
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 
 public class PlayerController : MonoBehaviour
 {
     public static PlayerController instance;
+
 
     public float moveSpeed, gravityModifier, jumpPower, runSpeed = 12f;
     public CharacterController charCon;
@@ -42,24 +45,30 @@ public class PlayerController : MonoBehaviour
     private float bounceAmount;
     private bool bounce;
 
+
+
+
     private void Awake()
     {
         instance = this;
     }
 
+
     // Start is called before the first frame update
     void Start()
     {
         currentGun--;
+
         SwitchGun();
 
         gunStartPos = gunHolder.localPosition;
     }
 
+
     // Update is called once per frame
     void Update()
     {
-        if (!UIController.instance.pauseScreen.activeInHierarchy && !GameManager.instance.levelEnding)
+        if (!UIController.uiController.pauseScreen.activeInHierarchy && !GameManager.instance.levelEnding)
         {
             //moveInput.x = Input.GetAxis("Horizontal") * moveSpeed * Time.deltaTime;
             //moveInput.z = Input.GetAxis("Vertical") * moveSpeed * Time.deltaTime;
@@ -68,15 +77,19 @@ public class PlayerController : MonoBehaviour
             float yStore = moveInput.y;
 
             Vector3 vertMove = transform.forward * Input.GetAxis("Vertical");
+
             Vector3 horiMove = transform.right * Input.GetAxis("Horizontal");
 
             moveInput = horiMove + vertMove;
+
             moveInput.Normalize();
+
 
             if (Input.GetKey(KeyCode.LeftShift))
             {
                 moveInput = moveInput * runSpeed;
             }
+
             else
             {
                 moveInput = moveInput * moveSpeed;
@@ -107,6 +120,7 @@ public class PlayerController : MonoBehaviour
 
                 AudioManager.instance.PlaySFX(8);
             }
+
             else if (canDoubleJump && Input.GetKeyDown(KeyCode.Space))
             {
                 moveInput.y = jumpPower;
@@ -117,14 +131,13 @@ public class PlayerController : MonoBehaviour
             }
 
 
-            if(bounce)
+            if (bounce)
             {
                 bounce = false;
+
                 moveInput.y = bounceAmount;
 
                 canDoubleJump = true;
-
-
             }
 
             charCon.Move(moveInput * Time.deltaTime);
@@ -137,6 +150,7 @@ public class PlayerController : MonoBehaviour
             {
                 mouseInput.x = -mouseInput.x;
             }
+
             if (invertY)
             {
                 mouseInput.y = -mouseInput.y;
@@ -160,6 +174,7 @@ public class PlayerController : MonoBehaviour
                         firePoint.LookAt(hit.point);
                     }
                 }
+
                 else
                 {
                     firePoint.LookAt(camTrans.position + (camTrans.forward * 30f));
@@ -194,6 +209,7 @@ public class PlayerController : MonoBehaviour
             {
                 gunHolder.position = Vector3.MoveTowards(gunHolder.position, adsPoint.position, adsSpeed * Time.deltaTime);
             }
+
             else
             {
                 gunHolder.localPosition = Vector3.MoveTowards(gunHolder.localPosition, gunStartPos, adsSpeed * Time.deltaTime);
@@ -208,10 +224,11 @@ public class PlayerController : MonoBehaviour
 
 
             anim.SetFloat("moveSpeed", moveInput.magnitude);
-            anim.SetBool("onGround", canJump);
 
+            anim.SetBool("onGround", canJump);
         }
     }
+
 
     public void FireShot()
     {
@@ -224,11 +241,15 @@ public class PlayerController : MonoBehaviour
 
             activeGun.fireCounter = activeGun.fireRate;
 
-            UIController.instance.ammoText.text = "AMMO: " + activeGun.currentAmmo;
+
+            UIController.uiController.ammoSlider.value = activeGun.currentAmmo;
+
+            UIController.uiController.ammoText.text = activeGun.currentAmmo + " / " + activeGun.maximumAmmo;
 
             muzzleFlash.SetActive(true);
         }
     }
+
 
     public void SwitchGun()
     {
@@ -236,28 +257,38 @@ public class PlayerController : MonoBehaviour
 
         currentGun++;
 
-        if(currentGun >= allGuns.Count)
+        if (currentGun >= allGuns.Count)
         {
             currentGun = 0;
         }
 
         activeGun = allGuns[currentGun];
+
         activeGun.gameObject.SetActive(true);
 
-        UIController.instance.ammoText.text = "AMMO: " + activeGun.currentAmmo;
+
+        // set maximum ammo of current weapon
+        activeGun.maximumAmmo = activeGun.currentAmmo;
+
+        UIController.uiController.ammoSlider.maxValue = activeGun.maximumAmmo;
+
+        UIController.uiController.ammoSlider.value = activeGun.currentAmmo;
+
+        UIController.uiController.ammoText.text = activeGun.currentAmmo + " / " + activeGun.maximumAmmo;
 
         firePoint.position = activeGun.firepoint.position;
     }
+
 
     public void AddGun(string gunToAdd)
     {
         bool gunUnlocked = false;
 
-        if(unlockableGuns.Count > 0)
+        if (unlockableGuns.Count > 0)
         {
-            for(int i = 0; i < unlockableGuns.Count; i++)
+            for (int i = 0; i < unlockableGuns.Count; i++)
             {
-                if(unlockableGuns[i].gunName == gunToAdd)
+                if (unlockableGuns[i].gunName == gunToAdd)
                 {
                     gunUnlocked = true;
 
@@ -271,16 +302,21 @@ public class PlayerController : MonoBehaviour
             
         }
 
-        if(gunUnlocked)
+        if (gunUnlocked)
         {
             currentGun = allGuns.Count - 2;
+
             SwitchGun();
         }
     }
 
+
     public void Bounce(float bounceForce)
     {
         bounceAmount = bounceForce;
+
         bounce = true;
     }
-}
+
+
+} // end of class

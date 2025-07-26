@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 
 public class Gun : MonoBehaviour
 {
@@ -12,7 +14,9 @@ public class Gun : MonoBehaviour
     [HideInInspector]
     public float fireCounter;
 
-    public int currentAmmo, pickupAmount;
+    public int currentAmmo;
+    public int maximumAmmo;
+    public int pickupAmount;
 
     public Transform firepoint;
 
@@ -20,25 +24,37 @@ public class Gun : MonoBehaviour
 
     public string gunName;
 
+
+
+
     // Start is called before the first frame update
     void Start()
     {
         
     }
 
+
     // Update is called once per frame
     void Update()
     {
-        if(fireCounter > 0)
+        if (fireCounter > 0)
         {
             fireCounter -= Time.deltaTime;
         }
     }
 
+
     public void GetAmmo()
     {
         currentAmmo += pickupAmount;
 
-        UIController.instance.ammoText.text = "AMMO: " + currentAmmo;
+
+        UIController.uiController.ammoSlider.value = currentAmmo;
+
+        float ammoPercentage = (float)currentAmmo / maximumAmmo * 100f;
+
+        UIController.uiController.ammoText.text = $"{ammoPercentage}%" + currentAmmo;
     }
-}
+
+
+} // end of class

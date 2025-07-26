@@ -1,39 +1,55 @@
-﻿using System.Collections;
+﻿
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 
 public class PlayerHealthController : MonoBehaviour
 {
     public static PlayerHealthController instance;
 
-    public int maxHealth, currentHealth;
+
+    public int maximumHealth;
+    
+    public int currentHealth;
 
     public float invincibleLength = 1f;
+
     private float invincCounter;
+
+
+
 
     private void Awake()
     {
         instance = this;
     }
 
+
     // Start is called before the first frame update
     void Start()
     {
-        currentHealth = maxHealth;
+        currentHealth = maximumHealth;
 
-        UIController.instance.healthSlider.maxValue = maxHealth;
-        UIController.instance.healthSlider.value = currentHealth;
-        UIController.instance.healthText.text = "HEALTH: " + currentHealth + "/" + maxHealth;
+        UIController.uiController.healthSlider.maxValue = maximumHealth;
+
+        UIController.uiController.healthSlider.value = currentHealth;
+
+        float healthPercentage = (float)currentHealth / maximumHealth * 100f;
+
+        UIController.uiController.healthText.text = $"{healthPercentage}%";
     }
+
 
     // Update is called once per frame
     void Update()
     {
-        if(invincCounter > 0)
+        if (invincCounter > 0)
         {
             invincCounter -= Time.deltaTime;
         }
     }
+
 
     public void DamagePlayer(int damageAmount)
     {
@@ -43,7 +59,7 @@ public class PlayerHealthController : MonoBehaviour
 
             currentHealth -= damageAmount;
 
-            UIController.instance.ShowDamage();
+            UIController.uiController.ShowDamage();
 
             if (currentHealth <= 0)
             {
@@ -54,28 +70,39 @@ public class PlayerHealthController : MonoBehaviour
                 GameManager.instance.PlayerDied();
 
                 AudioManager.instance.StopBGM();
+
                 AudioManager.instance.PlaySFX(6);
+
                 AudioManager.instance.StopSFX(7);
             }
 
             invincCounter = invincibleLength;
 
 
-            UIController.instance.healthSlider.value = currentHealth;
-            UIController.instance.healthText.text = "HEALTH: " + currentHealth + "/" + maxHealth;
+            UIController.uiController.healthSlider.value = currentHealth;
+
+            float healthPercentage = (float)currentHealth / maximumHealth * 100f;
+
+            UIController.uiController.healthText.text = $"{healthPercentage}%";
         }
     }
+
 
     public void HealPlayer(int healAmount)
     {
         currentHealth += healAmount;
 
-        if(currentHealth > maxHealth)
+        if (currentHealth > maximumHealth)
         {
-            currentHealth = maxHealth;
+            currentHealth = maximumHealth;
         }
 
-        UIController.instance.healthSlider.value = currentHealth;
-        UIController.instance.healthText.text = "HEALTH: " + currentHealth + "/" + maxHealth;
+        UIController.uiController.healthSlider.value = currentHealth;
+
+        float healthPercentage = (float)currentHealth / maximumHealth * 100f;
+
+        UIController.uiController.healthText.text = $"{healthPercentage}%";
     }
-}
+
+
+} // end of class

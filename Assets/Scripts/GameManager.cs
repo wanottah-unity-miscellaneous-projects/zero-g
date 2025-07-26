@@ -1,21 +1,28 @@
-﻿using System.Collections;
+﻿
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
+
 
     public float waitAfterDying = 2f;
 
     [HideInInspector]
     public bool levelEnding;
 
+
+
+
     private void Awake()
     {
         instance = this;
     }
+
 
     // Start is called before the first frame update
     void Start()
@@ -23,14 +30,16 @@ public class GameManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
     }
 
+
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
             PauseUnpause();
         }
     }
+
 
     public void PlayerDied()
     {
@@ -39,6 +48,7 @@ public class GameManager : MonoBehaviour
         //SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
+
     public IEnumerator PlayerDiedCo()
     {
         yield return new WaitForSeconds(waitAfterDying);
@@ -46,11 +56,12 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
+
     public void PauseUnpause()
     {
-        if(UIController.instance.pauseScreen.activeInHierarchy)
+        if (UIController.uiController.pauseScreen.activeInHierarchy)
         {
-            UIController.instance.pauseScreen.SetActive(false);
+            UIController.uiController.pauseScreen.SetActive(false);
 
             Cursor.lockState = CursorLockMode.Locked;
 
@@ -58,9 +69,11 @@ public class GameManager : MonoBehaviour
 
             PlayerController.instance.footstepFast.Play();
             PlayerController.instance.footstepSlow.Play();
-        } else
+        } 
+        
+        else
         {
-            UIController.instance.pauseScreen.SetActive(true);
+            UIController.uiController.pauseScreen.SetActive(true);
 
             Cursor.lockState = CursorLockMode.None;
 
@@ -70,4 +83,6 @@ public class GameManager : MonoBehaviour
             PlayerController.instance.footstepSlow.Stop();
         }
     }
-}
+
+
+} // end of class
