@@ -49,11 +49,11 @@ public class Gun : MonoBehaviour
         currentAmmo += pickupAmount;
 
 
+        UIController.uiController.ammoSlider.maxValue = maximumAmmo;
+
         UIController.uiController.ammoSlider.value = currentAmmo;
 
-        float ammoPercentage = (float)currentAmmo / maximumAmmo * 100f;
-
-        UIController.uiController.ammoText.text = $"{ammoPercentage}%" + currentAmmo;
+        UIController.uiController.ammoText.text = currentAmmo + " / " + maximumAmmo;
     }
 
 

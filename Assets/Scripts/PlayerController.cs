@@ -267,9 +267,6 @@ public class PlayerController : MonoBehaviour
         activeGun.gameObject.SetActive(true);
 
 
-        // set maximum ammo of current weapon
-        activeGun.maximumAmmo = activeGun.currentAmmo;
-
         UIController.uiController.ammoSlider.maxValue = activeGun.maximumAmmo;
 
         UIController.uiController.ammoSlider.value = activeGun.currentAmmo;
