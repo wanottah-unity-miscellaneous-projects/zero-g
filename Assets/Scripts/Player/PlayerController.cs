@@ -33,10 +33,10 @@ public class PlayerController : MonoBehaviour
 
     //public GameObject bullet;
     public Transform firePoint;
-
-    public Gun activeGun;
+  
     public List<Gun> allGuns = new List<Gun>();
     public List<Gun> unlockableGuns = new List<Gun>();
+    public Gun activeGun;
     public int currentGun;
 
     public Transform adsPoint, gunHolder;
@@ -73,7 +73,13 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!UIController.uiController.pauseScreen.activeInHierarchy && !GameManager.instance.levelEnding)
+        PlayerInput();
+    }
+
+
+    private void PlayerInput()
+    {
+        if (!UIController.uiController.pauseScreen.activeInHierarchy && !GameController.instance.levelEnding)
         {
             //moveInput.x = Input.GetAxis("Horizontal") * moveSpeed * Time.deltaTime;
             //moveInput.z = Input.GetAxis("Vertical") * moveSpeed * Time.deltaTime;
@@ -101,7 +107,7 @@ public class PlayerController : MonoBehaviour
             }
 
             // set the gravity to simulate the moon's gravity
-            Physics.gravity = new Vector3(0, -1.62f, 0);
+            ///Physics.gravity = new Vector3(0, -1.62f, 0);
 
             moveInput.y = yStore;
 

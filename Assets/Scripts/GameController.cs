@@ -5,15 +5,14 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 
-public class GameManager : MonoBehaviour
+public class GameController : MonoBehaviour
 {
-    public static GameManager instance;
+    public static GameController instance;
 
 
     public float waitAfterDying = 2f;
 
-    [HideInInspector]
-    public bool levelEnding;
+    [HideInInspector] public bool levelEnding;
 
 
 
@@ -27,7 +26,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Cursor.lockState = CursorLockMode.Locked;
+        InitialiseCursor();
     }
 
 
@@ -38,6 +37,12 @@ public class GameManager : MonoBehaviour
         {
             PauseUnpause();
         }
+    }
+
+
+    private void InitialiseCursor()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
 
@@ -52,6 +57,8 @@ public class GameManager : MonoBehaviour
     public IEnumerator PlayerDiedCo()
     {
         yield return new WaitForSeconds(waitAfterDying);
+
+        GameData.gameDataInstance.currentHealth = 100;
 
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }

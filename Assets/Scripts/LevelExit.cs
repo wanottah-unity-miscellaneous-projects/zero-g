@@ -1,7 +1,9 @@
-﻿using System.Collections;
+﻿
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+
 
 public class LevelExit : MonoBehaviour
 {
@@ -9,23 +11,19 @@ public class LevelExit : MonoBehaviour
 
     public float waitToEndLevel;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
     private void OnTriggerEnter(Collider other)
     {
         if(other.tag == "Player")
         {
-            GameManager.instance.levelEnding = true;
+            // SAVE GAME STATE //
+
+            GameData.gameDataInstance.currentHealth = PlayerHealthController.instance.currentHealth;
+
+
+
+            GameController.instance.levelEnding = true;
 
             StartCoroutine(EndLevelCo());
 
@@ -33,13 +31,17 @@ public class LevelExit : MonoBehaviour
         }
     }
 
+
     private IEnumerator EndLevelCo()
     {
         PlayerPrefs.SetString(nextLevel + "_cp", "");
+
         PlayerPrefs.SetString("CurrentLevel", nextLevel);
 
         yield return new WaitForSeconds(waitToEndLevel);
 
         SceneManager.LoadScene(nextLevel);
     }
-}
+
+
+} // end of class

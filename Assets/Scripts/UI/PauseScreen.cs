@@ -21,7 +21,7 @@ public class PauseScreen : MonoBehaviour
 
     public void Resume()
     {
-        GameManager.instance.PauseUnpause();
+        GameController.instance.PauseUnpause();
     }
 
     public void MainMenu()

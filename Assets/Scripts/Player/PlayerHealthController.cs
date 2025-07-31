@@ -9,13 +9,13 @@ public class PlayerHealthController : MonoBehaviour
     public static PlayerHealthController instance;
 
 
-    public int maximumHealth;
     
     public int currentHealth;
 
+
     public float invincibleLength = 1f;
 
-    private float invincCounter;
+    private float invincibleCounter;
 
 
 
@@ -29,14 +29,18 @@ public class PlayerHealthController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        currentHealth = maximumHealth;
+        // get the player's current health
+        currentHealth = GameData.gameDataInstance.currentHealth;
 
-        UIController.uiController.healthSlider.maxValue = maximumHealth;
+        // update the player ui health slider values
+        UIController.uiController.healthSlider.maxValue = GameData.gameDataInstance.maximumHealth;
 
         UIController.uiController.healthSlider.value = currentHealth;
 
-        float healthPercentage = (float)currentHealth / maximumHealth * 100f;
+        // convert the player health value to a percentage
+        float healthPercentage = (float)currentHealth / GameData.gameDataInstance.maximumHealth * 100f;
 
+        // update the player ui health text 
         UIController.uiController.healthText.text = $"{healthPercentage}%";
     }
 
@@ -44,63 +48,88 @@ public class PlayerHealthController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (invincCounter > 0)
+        // if the player's 'invicible' counter is greater than zero
+        if (invincibleCounter > 0)
         {
-            invincCounter -= Time.deltaTime;
+            // countdown the player's 'invicible' counter
+            invincibleCounter -= Time.deltaTime;
         }
     }
 
 
+    // damage the player
     public void DamagePlayer(int damageAmount)
     {
-        if (invincCounter <= 0 && !GameManager.instance.levelEnding)
+        // if the player's 'invicible' counter is less than or equal to zero
+        // and
+        // the current game level is not ending
+        if (invincibleCounter <= 0 && !GameController.instance.levelEnding)
         {
+            // play the 'player hurt' sound
             AudioManager.instance.PlaySFX(7);
 
+            // decrease the player's health by the 'damage amount'
             currentHealth -= damageAmount;
 
+            // show player damage
             UIController.uiController.ShowDamage();
 
+            // if the player's health is less than or equal to zero
             if (currentHealth <= 0)
             {
+                // deactivate the player
                 gameObject.SetActive(false);
 
+                // set the player's current health to zero
                 currentHealth = 0;
 
-                GameManager.instance.PlayerDied();
+                // respawn the player at the player's starting position
+                GameController.instance.PlayerDied();
 
+                // stop the background music
                 AudioManager.instance.StopBGM();
 
+                // play 'player dead' sound
                 AudioManager.instance.PlaySFX(6);
 
+                // stop the 'player hurt' sound
                 AudioManager.instance.StopSFX(7);
             }
 
-            invincCounter = invincibleLength;
+            invincibleCounter = invincibleLength;
 
-
+            // update the player ui health slider value
             UIController.uiController.healthSlider.value = currentHealth;
 
-            float healthPercentage = (float)currentHealth / maximumHealth * 100f;
+            // convert the player health value to a percentage
+            float healthPercentage = (float)currentHealth / GameData.gameDataInstance.maximumHealth * 100f;
 
+            // update the player ui health ui text 
             UIController.uiController.healthText.text = $"{healthPercentage}%";
         }
     }
 
 
+    // heal the player
     public void HealPlayer(int healAmount)
     {
-        currentHealth += healAmount;
+        // increment the player's health by the 'heal amount'
+        GameData.gameDataInstance.currentHealth += healAmount;
 
-        if (currentHealth > maximumHealth)
+        // if the player's current health is greater than the player's maximum health
+        if (GameData.gameDataInstance.currentHealth > GameData.gameDataInstance.maximumHealth)
         {
-            currentHealth = maximumHealth;
+            // then set the player's current health to the player's maximum health
+            GameData.gameDataInstance.currentHealth = GameData.gameDataInstance.maximumHealth;
         }
 
-        UIController.uiController.healthSlider.value = currentHealth;
+        // update the player ui health slider value
+        UIController.uiController.healthSlider.value = GameData.gameDataInstance.currentHealth;
 
-        float healthPercentage = (float)currentHealth / maximumHealth * 100f;
+        // convert the player health value to a percentage
+        float healthPercentage = (float)GameData.gameDataInstance.currentHealth / GameData.gameDataInstance.maximumHealth * 100f;
 
+        // update the player ui health ui text 
         UIController.uiController.healthText.text = $"{healthPercentage}%";
     }
 

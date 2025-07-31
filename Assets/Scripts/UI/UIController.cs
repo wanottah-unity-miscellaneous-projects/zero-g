@@ -39,13 +39,6 @@ public class UIController : MonoBehaviour
     }
 
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-
     // Update is called once per frame
     void Update()
     {
@@ -54,7 +47,7 @@ public class UIController : MonoBehaviour
             damageEffect.color = new Color(damageEffect.color.r, damageEffect.color.g, damageEffect.color.b, Mathf.MoveTowards(damageEffect.color.a, 0f, damageFadeSpeed * Time.deltaTime));
         }
 
-        if (!GameManager.instance.levelEnding)
+        if (!GameController.instance.levelEnding)
         {
             blackScreen.color = new Color(blackScreen.color.r, blackScreen.color.g, blackScreen.color.b, Mathf.MoveTowards(blackScreen.color.a, 0f, fadeSpeed * Time.deltaTime));
         } 
