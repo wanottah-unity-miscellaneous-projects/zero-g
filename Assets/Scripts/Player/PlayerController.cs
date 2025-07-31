@@ -9,7 +9,12 @@ public class PlayerController : MonoBehaviour
     public static PlayerController instance;
 
 
-    public float moveSpeed, gravityModifier, jumpPower, runSpeed = 12f;
+    public float moveSpeed = 12;
+    public float gravityModifier = 12f;
+    public float jumpPower = 12f;
+    public float runSpeed = 12f;
+
+
     public CharacterController charCon;
 
     private Vector3 moveInput;
@@ -94,6 +99,9 @@ public class PlayerController : MonoBehaviour
             {
                 moveInput = moveInput * moveSpeed;
             }
+
+            // set the gravity to simulate the moon's gravity
+            Physics.gravity = new Vector3(0, -1.62f, 0);
 
             moveInput.y = yStore;
 
