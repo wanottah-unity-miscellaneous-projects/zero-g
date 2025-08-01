@@ -1,20 +1,20 @@
 ﻿
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 
 public class PlayerHealthController : MonoBehaviour
 {
+    // enable other scripts to access this script
     public static PlayerHealthController instance;
 
 
-    
+    // player's current health
     public int currentHealth;
 
-
+    // how long the player is invicible for
     public float invincibleLength = 1f;
 
+    // invicibility countdown timer
     private float invincibleCounter;
 
 
@@ -26,22 +26,10 @@ public class PlayerHealthController : MonoBehaviour
     }
 
 
-    // Start is called before the first frame update
+
     void Start()
     {
-        // get the player's current health
-        currentHealth = GameData.gameDataInstance.currentHealth;
-
-        // update the player ui health slider values
-        UIController.uiController.healthSlider.maxValue = GameData.gameDataInstance.maximumHealth;
-
-        UIController.uiController.healthSlider.value = currentHealth;
-
-        // convert the player health value to a percentage
-        float healthPercentage = (float)currentHealth / GameData.gameDataInstance.maximumHealth * 100f;
-
-        // update the player ui health text 
-        UIController.uiController.healthText.text = $"{healthPercentage}%";
+        Initialise();
     }
 
 
@@ -54,6 +42,23 @@ public class PlayerHealthController : MonoBehaviour
             // countdown the player's 'invicible' counter
             invincibleCounter -= Time.deltaTime;
         }
+    }
+
+
+    private void Initialise()
+    {
+        // get the player's current health
+        currentHealth = GameData.gameDataInstance.currentHealth;
+
+        // update the player ui health slider values
+        UIController.uiController.healthSlider.maxValue = GameData.gameDataInstance.maximumHealth;
+        UIController.uiController.healthSlider.value = currentHealth;
+
+        // convert the player health value to a percentage
+        float healthPercentage = (float)currentHealth / GameData.gameDataInstance.maximumHealth * 100f;
+
+        // update the player ui health text 
+        UIController.uiController.healthText.text = $"{healthPercentage}%";
     }
 
 
@@ -96,6 +101,7 @@ public class PlayerHealthController : MonoBehaviour
                 AudioManager.instance.StopSFX(7);
             }
 
+            // reset the player's invincibility counter
             invincibleCounter = invincibleLength;
 
             // update the player ui health slider value

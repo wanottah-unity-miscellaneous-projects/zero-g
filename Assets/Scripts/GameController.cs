@@ -42,6 +42,7 @@ public class GameController : MonoBehaviour
 
     private void InitialiseCursor()
     {
+        // lock the mouse cursor to the game window and make it invisible
         Cursor.lockState = CursorLockMode.Locked;
     }
 
