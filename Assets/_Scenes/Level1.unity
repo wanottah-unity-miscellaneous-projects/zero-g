@@ -11425,7 +11425,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2031947602}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 306ca586b573b37438fcd991dda63db4, type: 3}
   m_Name: 
@@ -11439,7 +11439,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2031947602}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8c1be7bd0f2a5124994acbef0914261c, type: 3}
   m_Name: 
@@ -11523,7 +11523,7 @@ PrefabInstance:
     - target: {fileID: 7014478449070596221, guid: 5d9878aa60d0663449f779fe4ae6fe80,
         type: 3}
       propertyPath: m_Name
-      value: Level Exit
+      value: Portal
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
