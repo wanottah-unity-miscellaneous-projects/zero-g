@@ -41,6 +41,12 @@ public class CameraController : MonoBehaviour
     // move the camera
     void LateUpdate()
     {
+        MoveCamera();
+    }
+
+
+    private void MoveCamera()
+    {
         // set the camera position to the position of the camera rig
         transform.position = cameraRigPosition.position;
 

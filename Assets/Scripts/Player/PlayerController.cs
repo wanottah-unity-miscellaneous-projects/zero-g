@@ -1,5 +1,4 @@
 ﻿
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,11 +10,16 @@ public class PlayerController : MonoBehaviour
 
 
     // player's movement speed
-    public float moveSpeed = 12;
+    public float moveSpeed = 8f;
 
-    public float gravityModifier = 12f;
+    // how much gravity is applied to the player
+    public float gravityModifier = 2f;
 
-    public float jumpPower = 12f;
+    // moon's gravity
+    public float moonGravity = -1.62f;
+
+    // how much force is applied to the player to make them jump
+    public float jumpPower = 10f;
 
     // player's run speed
     public float runSpeed = 12f;
@@ -30,7 +34,7 @@ public class PlayerController : MonoBehaviour
     public Transform cameraRigPosition;
 
     // mouse movement sensitivity
-    public float mouseSensitivity;
+    public float mouseSensitivity = 2f;
 
     // mouse movement reversal flags
     public bool invertX;
@@ -41,24 +45,25 @@ public class PlayerController : MonoBehaviour
     private bool canJump;
     private bool canDoubleJump;
 
-
+    // reference to the player's ground check position transform component
     public Transform groundCheckPoint;
 
+    // checks if the player is walking on the ground lanyer
     public LayerMask whatIsGround;
 
     // reference to player animator component
-    public Animator anim;
+    public Animator playerAnimator;
 
-    //public GameObject bullet;
-
-    // reference to the player weapon fire position transform component
+    // reference to the player's weapon fire position transform component
     public Transform firePoint;
   
-
+    // create and initialise a list of all available weapons
     public List<Gun> allGuns = new List<Gun>();
 
+    // create and initialise a list of unlockable weapons
     public List<Gun> unlockableGuns = new List<Gun>();
 
+    // reference to the player's 'gun' script
     public Gun activeGun;
 
     // currently active weapon index
@@ -76,7 +81,7 @@ public class PlayerController : MonoBehaviour
     // weapon aim adjustment speed
     public float weaponAimAdjustmentSpeed = 2f;
 
-    // reference to player weapon muzzle flash
+    // reference to player's weapon muzzle flash game oject
     public GameObject muzzleFlash;
 
     // reference to player footstep audio
@@ -98,19 +103,22 @@ public class PlayerController : MonoBehaviour
     }
 
 
-    // Start is called before the first frame update
-    void Start()
+    // set the weapon the player starts the level with
+    private void Start()
     {
+        // decrement the 'current weapon' index
         currentGun--;
 
+        // select a weapon
         SwitchGun();
 
+        // set the weapon's position to the player's weapon holder position
         gunStartPosition = gunHolder.localPosition;
     }
 
 
-    // Update is called once per frame
-    void Update()
+    // get player input
+    private void Update()
     {
         PlayerInput();
     }
@@ -118,30 +126,26 @@ public class PlayerController : MonoBehaviour
 
     private void PlayerInput()
     {
-        // if the pause screen is not active
-        // and
-        // the game level is not ending
+        // if the pause screen is not active and the game level is not ending
         if (!UIController.uiController.pauseScreen.activeInHierarchy && !GameController.instance.levelEnding)
-        {
+        {          
+            MovementControl();
+
+            JumpControl();
+
             MovePlayer();
 
             CameraControl();
 
             WeaponControl();
-
-
-            anim.SetFloat("moveSpeed", moveInput.magnitude);
-
-            anim.SetBool("onGround", canJump);
         }
     }
 
 
-    private void MovePlayer()
+    private void MovementControl()
     {
-        // temporary store for player's 'y' axis movement
-        // if the player jumps
-        float yAxis = moveInput.y;
+        // temporary store for player's 'moveinput y' value if the player leaves the ground
+        float yAxisInput = moveInput.y;
 
         // get player's vertical 'z' axis movement
         Vector3 verticleMovement = transform.forward * Input.GetAxis("Vertical");
@@ -149,11 +153,12 @@ public class PlayerController : MonoBehaviour
         // get player's horizontal 'x' axis movement
         Vector3 horizontalMoveement = transform.right * Input.GetAxis("Horizontal");
 
-        // set the player movement input
+        // set the player's movement input
         moveInput = horizontalMoveement + verticleMovement;
 
-        // normalise the player input value
+        // normalise the player's input value
         moveInput.Normalize();
+
 
         // if the player presses the 'left shift' key
         if (Input.GetKey(KeyCode.LeftShift))
@@ -170,38 +175,67 @@ public class PlayerController : MonoBehaviour
         }
 
         // set the gravity to simulate the moon's gravity
-        ///Physics.gravity = new Vector3(0, -1.62f, 0);
+        ///Physics.gravity = new Vector3(0, moonGravity, 0);
 
-        moveInput.y = yAxis;
+        // reset the 'moveinput y' value of the player from the temporary store
+        moveInput.y = yAxisInput;
 
+        // apply gravity to the player
         moveInput.y += Physics.gravity.y * gravityModifier * Time.deltaTime;
 
+        // if the player is on the ground
         if (characterController.isGrounded)
         {
+            // set the 'moveinput y' value to the gravity value
             moveInput.y = Physics.gravity.y * gravityModifier * Time.deltaTime;
         }
+    }
 
+
+    private void MovePlayer()
+    {
+        characterController.Move(moveInput * Time.deltaTime);
+
+        AnimatePlayer();
+    }
+
+
+    private void AnimatePlayer()
+    {
+        // if the player is on the ground, animate the player's movement
+        playerAnimator.SetFloat("moveSpeed", moveInput.magnitude);
+
+        playerAnimator.SetBool("onGround", canJump);
+    }
+
+
+    private void JumpControl()
+    {
+        // set the 'can jump' flag if the player is on the 'ground' layer
         canJump = Physics.OverlapSphere(groundCheckPoint.position, .25f, whatIsGround).Length > 0;
 
-        if (canJump)
-        {
-            canDoubleJump = false;
-        }
 
-        //Handle Jumping
-        if (Input.GetKeyDown(KeyCode.Space) && canJump)
+        // if the player can jump and they have pressed the 'space' key
+        if (canJump && Input.GetKeyDown(KeyCode.Space))
         {
+            // set the player's 'moveinput y' value to the player's 'jump' value
             moveInput.y = jumpPower;
 
+            // allow the player to 'double jump'
             canDoubleJump = true;
 
+            // play the jump sound
             AudioManager.instance.PlaySFX(8);
         }
 
+        // otherwise
+        // if the player can 'double jump' and they have pressed the 'space' key
         else if (canDoubleJump && Input.GetKeyDown(KeyCode.Space))
         {
+            // set the player's 'moveinput y' value to the player's 'jump' value
             moveInput.y = jumpPower;
 
+            // disable 'double jump'
             canDoubleJump = false;
 
             // play the jump sound
@@ -213,14 +247,12 @@ public class PlayerController : MonoBehaviour
         {
             bounce = false;
 
+            // set the player's 'moveinput y' value to the player's 'bounce' value
             moveInput.y = bounceAmount;
 
+            // allow the player to 'double jump'
             canDoubleJump = true;
         }
-
-
-        // move the player
-        characterController.Move(moveInput * Time.deltaTime);
     }
 
 
@@ -258,26 +290,30 @@ public class PlayerController : MonoBehaviour
 
 
         // single shots //
+        // if the player presses the 'left' mouse button and the weapon's 'fire rate' counter is less than or equal to zero
         if (Input.GetMouseButtonDown(0) && activeGun.fireCounter <= 0)
         {
+            // initialise a 'ray cast' hit point
             RaycastHit hit;
 
+            // start the 'ray cast' from the camera rig position and send it out 'fifty' units it in a 'forward' direction
             if (Physics.Raycast(cameraRigPosition.position, cameraRigPosition.forward, out hit, 50f))
             {
+                // if the ray cast 'hits' something that is greater than two units from the player
                 if (Vector3.Distance(cameraRigPosition.position, hit.point) > 2f)
                 {
+                    // direct the 'fire point' of the player's weapon at the 'hit point' of the ray cast
                     firePoint.LookAt(hit.point);
                 }
             }
 
+            // otherwise
             else
             {
+                // simply direct the 'fire point' of the player's weapon straight ahead thirty units from the camera rig position
                 firePoint.LookAt(cameraRigPosition.position + (cameraRigPosition.forward * 30f));
             }
 
-
-
-            //Instantiate(bullet, firePoint.position, firePoint.rotation);
 
             // fire the weapon
             FireShot();
@@ -285,10 +321,13 @@ public class PlayerController : MonoBehaviour
 
 
         // repeating shots //
+        // if the player presses the 'left' mouse button and the weapon can 'auto fire'
         if (Input.GetMouseButton(0) && activeGun.canAutoFire)
         {
+            // if the weapon's 'fire rate' counter is less than or equal to zero
             if (activeGun.fireCounter <= 0)
             {
+                // fire the weapon
                 FireShot();
             }
         }
@@ -300,11 +339,14 @@ public class PlayerController : MonoBehaviour
             SwitchGun();
         }
 
+        // if the player presses the 'right' mouse button
         if (Input.GetMouseButtonDown(1))
         {
+            // zoom 'in' the camera on the target the player is aiming at
             CameraController.instance.ZoomIn(activeGun.zoomAmount);
         }
 
+        // if the player presses the 'right' mouse button
         if (Input.GetMouseButton(1))
         {
             gunHolder.position = Vector3.MoveTowards(gunHolder.position, weaponAimAdjustmentPoint.position, weaponAimAdjustmentSpeed * Time.deltaTime);
@@ -316,9 +358,10 @@ public class PlayerController : MonoBehaviour
         }
 
 
-
+        // if the player releases the right mouse button
         if (Input.GetMouseButtonUp(1))
         {
+            // zoom 'out' the camera from the target the player was aiming at
             CameraController.instance.ZoomOut();
         }
     }
@@ -333,7 +376,7 @@ public class PlayerController : MonoBehaviour
             // decrease the weapon's ammo by one round
             activeGun.currentAmmo--;
 
-            // create a bullet at the weapon's 'fire point'
+            // create a projectile at the weapon's 'fire point' position
             Instantiate(activeGun.bullet, firePoint.position, firePoint.rotation);
 
             // set the weapon's fire rate
@@ -359,15 +402,14 @@ public class PlayerController : MonoBehaviour
         // increment the 'current gun' index
         currentGun++;
 
-        // if the 'current gun' index is greater than or equal to 
-        // then number of available weapons
+        // if the 'current gun' index is greater than or equal to the number of available weapons
         if (currentGun >= allGuns.Count)
         {
             // set the 'current gun' index to zero
             currentGun = 0;
         }
 
-        // make the currently active weapon the selected weapon
+        // set the selected weapon to be the currently active weapon
         activeGun = allGuns[currentGun];
 
         // activate the weapon
