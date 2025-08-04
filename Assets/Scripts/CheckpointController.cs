@@ -1,42 +1,71 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+
 public class CheckpointController : MonoBehaviour
 {
-    public string cpName;
+    // check point name
+    public string checkpointName;
 
-    // Start is called before the first frame update
+
+
+    // spawn player at check point
     void Start()
     {
-        if(PlayerPrefs.HasKey(SceneManager.GetActiveScene().name + "_cp"))
+        GetCheckpointName();
+    }
+
+
+    private void GetCheckpointName()
+    {
+        // if the playerprefs has a 'check point name' key
+        if (PlayerPrefs.HasKey(SceneManager.GetActiveScene().name + "_cp"))
         {
-            if (PlayerPrefs.GetString(SceneManager.GetActiveScene().name + "_cp") == cpName)
+            // get the name of the check point
+            if (PlayerPrefs.GetString(SceneManager.GetActiveScene().name + "_cp") == checkpointName)
             {
+                // and spawn the player at the check point position
                 PlayerController.instance.transform.position = transform.position;
-                Debug.Log("Player starting at " + cpName);
+                Debug.Log("Player starting at " + checkpointName);
             }
         }
     }
 
-    // Update is called once per frame
+
+    // get player input
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.L))
+        GetPlayerInput();
+    }
+
+
+    // clear the check point name key
+    private void GetPlayerInput()
+    {
+        // if the player presses the 'L' key
+        if (Input.GetKeyDown(KeyCode.L))
         {
+            // clear the playerprefs 'check point name' key in the currently active scene
             PlayerPrefs.SetString(SceneManager.GetActiveScene().name + "_cp", "");
         }
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if(other.gameObject.tag == "Player")
-        {
-            PlayerPrefs.SetString(SceneManager.GetActiveScene().name + "_cp", cpName);
-            Debug.Log("Player hit " + cpName);
 
+    // if the check point is triggered
+    private void OnTriggerEnter(Collider checkpointTrigger)
+    {
+        // if the player has triggered a checkpoint
+        if(checkpointTrigger.gameObject.CompareTag("Player"))
+        {
+            // set a playerprefs key and set the it to the 'check point name' in the currently active scene
+            PlayerPrefs.SetString(SceneManager.GetActiveScene().name + "_cp", checkpointName);
+            Debug.Log("Player hit " + checkpointName);
+
+            // play the 'check point triggered' sound
             AudioManager.instance.PlaySFX(1);
         }
     }
-}
+
+
+} // end of class

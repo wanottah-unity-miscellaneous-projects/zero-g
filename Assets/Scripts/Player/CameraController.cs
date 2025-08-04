@@ -1,6 +1,4 @@
 ﻿
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -12,9 +10,13 @@ public class CameraController : MonoBehaviour
     // reference to the camera's rig position transform component
     public Transform cameraRigPosition;
 
-    private float startFOV;
-    private float targetFOV;
+    // weapon's default field of view setting
+    private float defaultFieldOfView;
 
+    // weapon's 'zoom' field of view setting
+    private float zoomFieldOfView;
+
+    // how quickly the weapon changes its 'zoom' setting
     public float zoomSpeed = 1f;
 
     // reference to the player camera
@@ -29,23 +31,31 @@ public class CameraController : MonoBehaviour
     }
 
 
-    // Start is called before the first frame update
-    void Start()
+    // initialise the weapon's default field of view 
+    private void Start()
     {
-        startFOV = playerCamera.fieldOfView;
-
-        targetFOV = startFOV;
+        InitialiseFieldOfView();
     }
 
 
-    // move the camera
-    void LateUpdate()
+    // adjust the camera's field of view based on the weapon's 'zoom' value
+    private void LateUpdate()
     {
-        MoveCamera();
+        AdjustCameraFieldOfView();
     }
 
 
-    private void MoveCamera()
+    private void InitialiseFieldOfView()
+    {
+        // set the 'default' field of view to the camera's current field of view value
+        defaultFieldOfView = playerCamera.fieldOfView;
+
+        // set the weapon's 'zoom' field of view to the default value
+        zoomFieldOfView = defaultFieldOfView;
+    }
+
+
+    private void AdjustCameraFieldOfView()
     {
         // set the camera position to the position of the camera rig
         transform.position = cameraRigPosition.position;
@@ -53,20 +63,22 @@ public class CameraController : MonoBehaviour
         // set the camera rotation to the rotation of the camera rig
         transform.rotation = cameraRigPosition.rotation;
 
-
-        playerCamera.fieldOfView = Mathf.Lerp(playerCamera.fieldOfView, targetFOV, zoomSpeed * Time.deltaTime);
+        // adjust the camera's 'field of view' to the weapon's 'zoom' position
+        playerCamera.fieldOfView = Mathf.Lerp(playerCamera.fieldOfView, zoomFieldOfView, zoomSpeed * Time.deltaTime);
     }
 
 
     public void ZoomIn(float newZoom)
     {
-        targetFOV = newZoom;
+        // zoom in weapon
+        zoomFieldOfView = newZoom;
     }
 
 
     public void ZoomOut()
     {
-        targetFOV = startFOV;
+        // return weapon to default zoom
+        zoomFieldOfView = defaultFieldOfView;
     }
 
 

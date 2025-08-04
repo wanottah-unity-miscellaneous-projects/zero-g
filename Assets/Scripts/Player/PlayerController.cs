@@ -75,7 +75,7 @@ public class PlayerController : MonoBehaviour
     // reference to the player's weapon holder transform component
     public Transform gunHolder;
 
-    // weapon position
+    // weapon start position
     private Vector3 gunStartPosition;
 
     // weapon aim adjustment speed
@@ -106,14 +106,7 @@ public class PlayerController : MonoBehaviour
     // set the weapon the player starts the level with
     private void Start()
     {
-        // decrement the 'current weapon' index
-        currentGun--;
-
-        // select a weapon
-        SwitchGun();
-
-        // set the weapon's position to the player's weapon holder position
-        gunStartPosition = gunHolder.localPosition;
+        SetStartWeapon();
     }
 
 
@@ -121,6 +114,19 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         PlayerInput();
+    }
+
+
+    private void SetStartWeapon()
+    {
+        // decrement the 'current weapon' index
+        currentGun--;
+
+        // select a weapon
+        SwitchGun();
+
+        // set the weapon's position starting to the player's weapon holder position
+        gunStartPosition = gunHolder.localPosition;
     }
 
 
@@ -349,11 +355,15 @@ public class PlayerController : MonoBehaviour
         // if the player presses the 'right' mouse button
         if (Input.GetMouseButton(1))
         {
+            // move the player's weapon to the aim position of the player
             gunHolder.position = Vector3.MoveTowards(gunHolder.position, weaponAimAdjustmentPoint.position, weaponAimAdjustmentSpeed * Time.deltaTime);
         }
 
+        // otherwise
+        // if the player releases the 'right' mouse button
         else
         {
+            // return the player's weapon to its 'default' firing position
             gunHolder.localPosition = Vector3.MoveTowards(gunHolder.localPosition, gunStartPosition, weaponAimAdjustmentSpeed * Time.deltaTime);
         }
 
@@ -392,8 +402,7 @@ public class PlayerController : MonoBehaviour
     }
 
 
-    // if the player presses the 'tab' key
-    // switch to another weapon
+    // if the player presses the 'tab' key, switch to another weapon
     public void SwitchGun()
     {
         // deactivate the currently active weapon
@@ -425,32 +434,43 @@ public class PlayerController : MonoBehaviour
     }
 
 
+    // add the weapon picked up by the player to the player's 'all weapons' list
     public void AddGun(string gunToAdd)
     {
+        // initialise a flag to indicate the collected weapon is locked
         bool gunUnlocked = false;
 
+        // if the number of available 'unlockable' weapons in the player's 'unlockable' weapons list is greater than zero
         if (unlockableGuns.Count > 0)
         {
-            for (int i = 0; i < unlockableGuns.Count; i++)
+            // loop through the number of 'unlockable' weapons in the list
+            for (int weaponIndex = 0; weaponIndex < unlockableGuns.Count; weaponIndex++)
             {
-                if (unlockableGuns[i].gunName == gunToAdd)
+                // if the weapon 'name' at the current weapon index in the list is equal to the weapon 'name' picked up by the player
+                if (unlockableGuns[weaponIndex].gunName == gunToAdd)
                 {
+                    // unlock the weapon at the current weapon index
                     gunUnlocked = true;
 
-                    allGuns.Add(unlockableGuns[i]);
+                    // add the now 'unlocked' weapon to the player's 'all weapons' list
+                    allGuns.Add(unlockableGuns[weaponIndex]);
 
-                    unlockableGuns.RemoveAt(i);
+                    // 'remove' the 'unlockable' weapon from the 'unlockable' weapons list
+                    unlockableGuns.RemoveAt(weaponIndex);
 
-                    i = unlockableGuns.Count;
+                    // and set the weapon index to the number of 'unlockable' weapons
+                    weaponIndex = unlockableGuns.Count;
                 }
-            }
-            
+            }        
         }
 
+        // if the collected weapon has been 'unlocked'
         if (gunUnlocked)
         {
+            // set the 'current' weapon index to the 'collected' weapon index
             currentGun = allGuns.Count - 2;
 
+            // and switch the player's 'current' weapon to the 'collected' weapon
             SwitchGun();
         }
     }

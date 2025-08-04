@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
-
+    // the name of the first level (scene) to load and run
     public string firstLevel;
 
     // reference to the menu 'continue' button
@@ -13,7 +13,15 @@ public class MainMenu : MonoBehaviour
 
 
 
-    void Start()
+    // checks for a game 'continue' button
+    private void Start()
+    {
+        ContinueButton();
+    }
+
+
+    // game 'continue' button
+    private void ContinueButton()
     {
         // if 'playerprefs' has a 'continue' key entry
         if (PlayerPrefs.HasKey("CurrentLevel"))
@@ -30,7 +38,7 @@ public class MainMenu : MonoBehaviour
         // if 'playerprefs' doesn't have a 'continue' key entry
         else
         {
-            // disable the 'continue' button
+            // simply disable the 'continue' button
             continueButton.SetActive(false);
         }
     }
@@ -39,38 +47,26 @@ public class MainMenu : MonoBehaviour
     // if the player has clicked the 'continue' button
     public void Continue()
     {
+        // load the level saved in the playerprefs 'current level' key
         SceneManager.LoadScene(PlayerPrefs.GetString("CurrentLevel"));
     }
 
 
-    // if the player has clicked the 'play'button
-    // start playing the game
+    // if the player has clicked the 'play' button, start playing the game
     public void PlayGame()
     {
-        // initialise the game data
-        InitialiseGameData();
-
-
         // load the 'level1' game scene
         SceneManager.LoadScene(firstLevel);
 
+        // reset the playerprefs 'current level' key
         PlayerPrefs.SetString("CurrentLevel", "");
 
+        // reset the 'first level loaded' playerprefs 'check point' key
         PlayerPrefs.SetString(firstLevel + "_cp", "");
     }
 
 
-    // initialise the game data
-    private void InitialiseGameData()
-    {
-        // set the player's current health in the game data instance
-        GameData.gameDataInstance.currentHealth = 100;
-
-        // set the player's maximum health in the game data instance
-        GameData.gameDataInstance.maximumHealth = 100;
-    }
-
-
+    // quit the game
     public void QuitGame()
     {
         Application.Quit();

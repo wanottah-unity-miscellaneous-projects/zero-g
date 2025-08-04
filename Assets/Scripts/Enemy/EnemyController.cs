@@ -44,15 +44,19 @@ public class EnemyController : MonoBehaviour
     // enemy weapon's fire rate
     public float fireRate;
 
+    // the time between the enemy firing bullets
     public float waitBetweenShots = 2f;
 
+    // grace period before enemy starts to shoot at player
     public float timeToShoot = 1f;
 
     // fire rate countdown counter
     private float fireCount;
 
+    // the time between the enemy firing bullets counter
     private float shotWaitCounter;
 
+    // wait to shoot at player counter
     private float shootTimeCounter;
 
 
@@ -83,8 +87,10 @@ public class EnemyController : MonoBehaviour
         // get the enemy's starting position
         startPoint = transform.position;
 
+        // initialise the wait to shoot at player counter
         shootTimeCounter = timeToShoot;
 
+        // initialise the time between the enemy firing bullets counter
         shotWaitCounter = waitBetweenShots;
     }
 
@@ -115,7 +121,7 @@ public class EnemyController : MonoBehaviour
 
     private void ChasePlayer()
     {
-        // if the enemy is not within the stopping distance of the player
+        // if the enemy is not within stopping distance of the player
         if (Vector3.Distance(transform.position, targetPoint) > distanceToStop)
         {
             // move the enemy toward the player
@@ -125,7 +131,7 @@ public class EnemyController : MonoBehaviour
         // otherwise
         else
         {
-            // stop the enemy from moving
+            // set the destination of the enemy to be its current position
             agent.destination = transform.position;
         }
 
@@ -142,32 +148,40 @@ public class EnemyController : MonoBehaviour
             }
         }
 
+        // otherwise
         else
         {
             wasShot = false;
         }
 
+
+        // if the time between the enemy firing bullets counter is greater than zero
         if (shotWaitCounter > 0)
         {
+            // decrease the time between the enemy firing bullets counter
             shotWaitCounter -= Time.deltaTime;
 
+            // if the time between the enemy firing bullets counter is less than or equal to zero
             if (shotWaitCounter <= 0)
             {
+                // reset the 'wait to shoot at player' counter
                 shootTimeCounter = timeToShoot;
             }
 
+            // play the enemy moving animation
             enemyAnimator.SetBool("isMoving", true);
         }
 
+        // otherwise
         else
         {
             // if the player is not dead
             if (PlayerController.instance.gameObject.activeInHierarchy)
             {
-                // decrease the enemy's shoot time counter
+                // decrease the 'wait to shoot at player' counter
                 shootTimeCounter -= Time.deltaTime;
 
-                // if the shoot time counter is greater than zero
+                // if the 'wait to shoot at player' counter is greater than zero
                 if (shootTimeCounter > 0)
                 {
                     // decrease the enemy's fire rate counter
@@ -179,37 +193,46 @@ public class EnemyController : MonoBehaviour
                         // reset the fire rate counter to the fire rate
                         fireCount = fireRate;
 
+                        // make the enemy aim at the player
                         firePoint.LookAt(PlayerController.instance.transform.position + new Vector3(0f, 1.2f, 0f));
 
-                        //check the angle to the player
-                        Vector3 targetDir = PlayerController.instance.transform.position - transform.position;
+                        // get the 'direction position' of the player
+                        Vector3 targetDirection = PlayerController.instance.transform.position - transform.position;
 
-                        float angle = Vector3.SignedAngle(targetDir, transform.forward, Vector3.up);
+                        // calculate the firing angle to the player's direction position
+                        float angle = Vector3.SignedAngle(targetDirection, transform.forward, Vector3.up);
 
-
+                        // if the firing angle of the player's direction position is between zero and thirty degrees
                         if (Mathf.Abs(angle) < 30f)
                         {
-
+                            // create a bullet at the enemy weapon's fire point position
                             Instantiate(bullet, firePoint.position, firePoint.rotation);
 
+                            // play the enemy firing animation
                             enemyAnimator.SetTrigger("fireShot");
                         }
 
+                        // otherwise
                         else
                         {
+                            // reset the time between the enemy firing bullets counter
                             shotWaitCounter = waitBetweenShots;
                         }
                     }
 
+                    // set the destination of the enemy to be its current position
                     agent.destination = transform.position;
                 }
 
+                // otherwise
                 else
                 {
+                    // reset the time between the enemy firing bullets counter
                     shotWaitCounter = waitBetweenShots;
                 }
             }
 
+            // stop playing the enemy moving animation
             enemyAnimator.SetBool("isMoving", false);
         }
     }
@@ -224,6 +247,7 @@ public class EnemyController : MonoBehaviour
             // set the enemy is chasing flag to true
             enemyIsChasing = true;
 
+            // set the 'wait to shoot at player' counter
             shootTimeCounter = timeToShoot;
 
             shotWaitCounter = waitBetweenShots;
