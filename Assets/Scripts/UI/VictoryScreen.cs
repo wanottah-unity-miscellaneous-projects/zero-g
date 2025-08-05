@@ -49,6 +49,7 @@ public class VictoryScreen : MonoBehaviour
 
         // unlock and show the cursor
         Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 
 

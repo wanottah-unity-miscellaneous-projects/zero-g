@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
-    // the name of the first level (scene) to load and run
+    // the name of the first level (scene) to load
     public string firstLevel;
 
     // reference to the menu 'continue' button

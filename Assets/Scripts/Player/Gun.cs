@@ -32,7 +32,7 @@ public class Gun : MonoBehaviour
     public float zoomAmount;
 
     // name of the weapon
-    public string gunName;
+    public string weaponName;
 
 
 

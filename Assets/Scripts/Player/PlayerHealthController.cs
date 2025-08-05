@@ -101,7 +101,7 @@ public class PlayerHealthController : MonoBehaviour
                 GameController.instance.PlayerDied();
 
                 // stop the background music
-                AudioManager.instance.StopBGM();
+                AudioManager.instance.StopBackgroundMusic();
 
                 // play 'player dead' sound
                 AudioManager.instance.PlaySFX(6);

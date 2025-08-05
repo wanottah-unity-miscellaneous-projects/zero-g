@@ -63,6 +63,7 @@ public class EnemyController : MonoBehaviour
     // reference to the enemy's animator component
     public Animator enemyAnimator;
 
+    // when the enemy gets shot by the player
     private bool wasShot;
 
 
@@ -138,6 +139,7 @@ public class EnemyController : MonoBehaviour
         // if the player is not close enough for the enemy to chase
         if (Vector3.Distance(transform.position, targetPoint) > distanceToLose)
         {
+            // and the enemy has not been shot by the player
             if (!wasShot)
             {
                 // set the enemy is chasing flag to false - stop chasing the player
@@ -151,6 +153,7 @@ public class EnemyController : MonoBehaviour
         // otherwise
         else
         {
+            // set the 'enemy shot by player' flag to false
             wasShot = false;
         }
 
@@ -283,10 +286,13 @@ public class EnemyController : MonoBehaviour
     }
 
 
+    // when the enemy gets shot by the player
     public void GetShot()
     {
+        // set the 'enemy was shot by the player' flag
         wasShot = true;
 
+        // make the enemy start chasing the player
         enemyIsChasing = true;
     }
 

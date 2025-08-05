@@ -276,8 +276,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9298a42d3a554a41b9a7ababfe306d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentHealth: 5
-  theEC: {fileID: 453983419746913080}
+  currentHealth: 100
+  enemyControllerScript: {fileID: 453983419746913080}
 --- !u!114 &453983419746913080
 MonoBehaviour:
   m_ObjectHideFlags: 0

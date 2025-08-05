@@ -49,6 +49,7 @@ public class UIController : MonoBehaviour
     }
 
 
+    // screen fader effects
     private void Update()
     {
         VisualEffects();
@@ -58,20 +59,25 @@ public class UIController : MonoBehaviour
     private void VisualEffects()
     {
         // player //
-        // if the colour's 'alpha' value is not equal to zero
+        // if the screen colour's 'alpha' value is not equal to zero
         if (damageEffect.color.a != 0)
         {
             // fade out the player's damage effect
             damageEffect.color = new Color(damageEffect.color.r, damageEffect.color.g, damageEffect.color.b, Mathf.MoveTowards(damageEffect.color.a, 0f, damageFadeSpeed * Time.deltaTime));
         }
 
+        // game level //
+        // if the level is not ending
         if (!GameController.instance.levelEnding)
         {
+            // fade the screen colour from black to transparent
             blackScreen.color = new Color(blackScreen.color.r, blackScreen.color.g, blackScreen.color.b, Mathf.MoveTowards(blackScreen.color.a, 0f, fadeSpeed * Time.deltaTime));
         }
 
+        // otherwise
         else
         {
+            // fade the screen colour from transparent to black
             blackScreen.color = new Color(blackScreen.color.r, blackScreen.color.g, blackScreen.color.b, Mathf.MoveTowards(blackScreen.color.a, 1f, fadeSpeed * Time.deltaTime));
         }
     }

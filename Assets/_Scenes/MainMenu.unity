@@ -179,12 +179,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4382a5c1df9325f408e7b98fbc45a634, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentHealth: 0
-  maximumHealth: 0
-  currentAmmo: 0
-  maximumAmmo: 0
-  currentGun: 0
-  activeGun: {fileID: 0}
 --- !u!4 &74155043
 Transform:
   m_ObjectHideFlags: 0
@@ -522,7 +516,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Shooty Shoot
+  m_Text: Zombie Zero-G
 --- !u!222 &483125993
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1488,8 +1482,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7bf2bd295ce533e438d8b3c08e4fdae1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentHealth: 0
-  maximumHealth: 0
   firstLevel: Level1
   continueButton: {fileID: 1721643333}
 --- !u!114 &2020148257

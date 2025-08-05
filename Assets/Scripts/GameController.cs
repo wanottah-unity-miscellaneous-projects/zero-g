@@ -1,6 +1,5 @@
 ﻿
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -14,6 +13,7 @@ public class GameController : MonoBehaviour
     // time to wait after player dies before respawning player
     public float waitAfterDying = 2f;
 
+    // when the level has been completed
     [HideInInspector] public bool levelEnding;
 
 
@@ -54,6 +54,7 @@ public class GameController : MonoBehaviour
     {
         // lock the mouse cursor to the game window and make it invisible
         Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
 
@@ -69,9 +70,6 @@ public class GameController : MonoBehaviour
     {
         // short pause before respawning player
         yield return new WaitForSeconds(waitAfterDying);
-
-        // reset the player's health
-        GameData.gameDataInstance.currentHealth = 100;
 
         // load the currently active scene
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
@@ -89,6 +87,7 @@ public class GameController : MonoBehaviour
 
             // hide and lock the cursor
             Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
 
             // unfreeze the game play
             Time.timeScale = 1f;
@@ -106,6 +105,7 @@ public class GameController : MonoBehaviour
 
             // unlock and show the cursor
             Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
 
             // freeze the game play
             Time.timeScale = 0f;

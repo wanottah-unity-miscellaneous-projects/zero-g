@@ -5,10 +5,10 @@ using UnityEngine;
 public class EnemyHealthController : MonoBehaviour
 {
     // how much health the enemy has
-    public int currentHealth = 5;
+    public int currentHealth = 100;
 
     // reference to the enemy's 'enemy controller' script
-    public EnemyController theEC;
+    public EnemyController enemyControllerScript;
 
 
 
@@ -19,9 +19,11 @@ public class EnemyHealthController : MonoBehaviour
         currentHealth -= damageAmount;
 
 
-        if (theEC != null)
+        // if the enemy has an active enemy controller script attached
+        if (enemyControllerScript != null)
         {
-            theEC.GetShot();
+            // call the 'get shot' method on the enemy controller script
+            enemyControllerScript.GetShot();
         }
 
 

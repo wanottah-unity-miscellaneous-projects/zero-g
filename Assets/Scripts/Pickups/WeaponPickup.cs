@@ -5,7 +5,7 @@ using UnityEngine;
 public class WeaponPickup : MonoBehaviour
 {
     // the name of the weapon the player has collected
-    public string theGun;
+    public string weaponName;
 
     // whether the weapon pickup has been collected
     private bool collected;
@@ -17,8 +17,9 @@ public class WeaponPickup : MonoBehaviour
         // if the player collides with the weapon pickup and the pickup hasn't already been collected
         if (other.CompareTag("Player") && !collected)
         {
+            Debug.Log(weaponName);
             // add the weapon
-            PlayerController.instance.AddGun(theGun);
+            PlayerController.instance.AddGun(weaponName);
 
             // destroy the weapon pickup
             Destroy(gameObject);

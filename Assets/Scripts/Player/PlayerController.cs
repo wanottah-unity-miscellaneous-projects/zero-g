@@ -69,6 +69,9 @@ public class PlayerController : MonoBehaviour
     // currently active weapon index
     public int currentGun;
 
+    // the minimum number of weapons the player has to have to switch weapons
+    private int minimumWeaponCount = 2;
+
     // reference to the weapon aim adjustment position transform component
     public Transform weaponAimAdjustmentPoint;
 
@@ -88,10 +91,10 @@ public class PlayerController : MonoBehaviour
     public AudioSource footstepFast;
     public AudioSource footstepSlow;
 
-    // how high the player bounces if the walk onto a bounce pad
+    // how high the player bounces if they walk onto a bounce pad
     private float bounceAmount;
 
-    // if the player can bounce
+    // if the player has bounced
     private bool bounce;
 
 
@@ -120,10 +123,10 @@ public class PlayerController : MonoBehaviour
     private void SetStartWeapon()
     {
         // decrement the 'current weapon' index
-        currentGun--;
+        ///currentGun--;
 
         // select a weapon
-        SwitchGun();
+        ///SwitchGun();
 
         // set the weapon's position starting to the player's weapon holder position
         gunStartPosition = gunHolder.localPosition;
@@ -249,11 +252,13 @@ public class PlayerController : MonoBehaviour
         }
 
 
+        // if the player has bounced
         if (bounce)
         {
+            // set the 'player has bounced' flag to false
             bounce = false;
 
-            // set the player's 'moveinput y' value to the player's 'bounce' value
+            // set the player's 'moveinput y' value to the player's 'bounce amount' value
             moveInput.y = bounceAmount;
 
             // allow the player to 'double jump'
@@ -295,84 +300,94 @@ public class PlayerController : MonoBehaviour
         muzzleFlash.SetActive(false);
 
 
-        // single shots //
-        // if the player presses the 'left' mouse button and the weapon's 'fire rate' counter is less than or equal to zero
-        if (Input.GetMouseButtonDown(0) && activeGun.fireCounter <= 0)
+        // if the player has a weapon to fire
+        if (allGuns.Count != 0)
         {
-            // initialise a 'ray cast' hit point
-            RaycastHit hit;
 
-            // start the 'ray cast' from the camera rig position and send it out 'fifty' units it in a 'forward' direction
-            if (Physics.Raycast(cameraRigPosition.position, cameraRigPosition.forward, out hit, 50f))
+            // single shots //
+            // if the player presses the 'left' mouse button and the weapon's 'fire rate' counter is less than or equal to zero
+            if (Input.GetMouseButtonDown(0) && activeGun.fireCounter <= 0)
             {
-                // if the ray cast 'hits' something that is greater than two units from the player
-                if (Vector3.Distance(cameraRigPosition.position, hit.point) > 2f)
+                // initialise a 'ray cast' hit point
+                RaycastHit hit;
+
+                // start the 'ray cast' from the camera rig position and send it out 'fifty' units it in a 'forward' direction
+                if (Physics.Raycast(cameraRigPosition.position, cameraRigPosition.forward, out hit, 50f))
                 {
-                    // direct the 'fire point' of the player's weapon at the 'hit point' of the ray cast
-                    firePoint.LookAt(hit.point);
+                    // if the ray cast 'hits' something that is greater than two units from the player
+                    if (Vector3.Distance(cameraRigPosition.position, hit.point) > 2f)
+                    {
+                        // direct the 'fire point' of the player's weapon at the 'hit point' of the ray cast
+                        firePoint.LookAt(hit.point);
+                    }
                 }
-            }
 
-            // otherwise
-            else
-            {
-                // simply direct the 'fire point' of the player's weapon straight ahead thirty units from the camera rig position
-                firePoint.LookAt(cameraRigPosition.position + (cameraRigPosition.forward * 30f));
-            }
-
-
-            // fire the weapon
-            FireShot();
-        }
+                // otherwise
+                else
+                {
+                    // simply direct the 'fire point' of the player's weapon straight ahead thirty units from the camera rig position
+                    firePoint.LookAt(cameraRigPosition.position + (cameraRigPosition.forward * 30f));
+                }
 
 
-        // repeating shots //
-        // if the player presses the 'left' mouse button and the weapon can 'auto fire'
-        if (Input.GetMouseButton(0) && activeGun.canAutoFire)
-        {
-            // if the weapon's 'fire rate' counter is less than or equal to zero
-            if (activeGun.fireCounter <= 0)
-            {
                 // fire the weapon
                 FireShot();
             }
-        }
-
-        // if the player presses the 'tab' key
-        if (Input.GetKeyDown(KeyCode.Tab))
-        {
-            // select another weapon
-            SwitchGun();
-        }
-
-        // if the player presses the 'right' mouse button
-        if (Input.GetMouseButtonDown(1))
-        {
-            // zoom 'in' the camera on the target the player is aiming at
-            CameraController.instance.ZoomIn(activeGun.zoomAmount);
-        }
-
-        // if the player presses the 'right' mouse button
-        if (Input.GetMouseButton(1))
-        {
-            // move the player's weapon to the aim position of the player
-            gunHolder.position = Vector3.MoveTowards(gunHolder.position, weaponAimAdjustmentPoint.position, weaponAimAdjustmentSpeed * Time.deltaTime);
-        }
-
-        // otherwise
-        // if the player releases the 'right' mouse button
-        else
-        {
-            // return the player's weapon to its 'default' firing position
-            gunHolder.localPosition = Vector3.MoveTowards(gunHolder.localPosition, gunStartPosition, weaponAimAdjustmentSpeed * Time.deltaTime);
-        }
 
 
-        // if the player releases the right mouse button
-        if (Input.GetMouseButtonUp(1))
-        {
-            // zoom 'out' the camera from the target the player was aiming at
-            CameraController.instance.ZoomOut();
+            // repeating shots //
+            // if the player presses the 'left' mouse button and the weapon can 'auto fire'
+            if (Input.GetMouseButton(0) && activeGun.canAutoFire)
+            {
+                // if the weapon's 'fire rate' counter is less than or equal to zero
+                if (activeGun.fireCounter <= 0)
+                {
+                    // fire the weapon
+                    FireShot();
+                }
+            }
+
+            // if the player presses the 'tab' key
+            if (Input.GetKeyDown(KeyCode.Tab))
+            {
+                // if the player has more than one weapon
+                if (allGuns.Count >= minimumWeaponCount)
+                {
+                    // select another weapon
+                    SwitchGun();
+                }
+            }
+
+            // if the player presses the 'right' mouse button
+            if (Input.GetMouseButtonDown(1))
+            {
+                // zoom 'in' the camera on the target the player is aiming at
+                CameraController.instance.ZoomIn(activeGun.zoomAmount);
+            }
+
+            // if the player presses the 'right' mouse button
+            if (Input.GetMouseButton(1))
+            {
+                // move the player's weapon to the aim position of the player
+                gunHolder.position = Vector3.MoveTowards(gunHolder.position, weaponAimAdjustmentPoint.position, weaponAimAdjustmentSpeed * Time.deltaTime);
+            }
+
+            // otherwise
+            // if the player releases the 'right' mouse button
+            else
+            {
+                // return the player's weapon to its 'default' firing position
+                gunHolder.localPosition = Vector3.MoveTowards(gunHolder.localPosition, gunStartPosition, weaponAimAdjustmentSpeed * Time.deltaTime);
+            }
+
+
+            // if the player releases the right mouse button
+            if (Input.GetMouseButtonUp(1))
+            {
+                // zoom 'out' the camera from the target the player was aiming at
+                CameraController.instance.ZoomOut();
+            }
+
         }
     }
 
@@ -435,7 +450,7 @@ public class PlayerController : MonoBehaviour
 
 
     // add the weapon picked up by the player to the player's 'all weapons' list
-    public void AddGun(string gunToAdd)
+    public void AddGun(string weaponToAdd)
     {
         // initialise a flag to indicate the collected weapon is locked
         bool gunUnlocked = false;
@@ -446,8 +461,9 @@ public class PlayerController : MonoBehaviour
             // loop through the number of 'unlockable' weapons in the list
             for (int weaponIndex = 0; weaponIndex < unlockableGuns.Count; weaponIndex++)
             {
+                Debug.Log(unlockableGuns[weaponIndex].weaponName);
                 // if the weapon 'name' at the current weapon index in the list is equal to the weapon 'name' picked up by the player
-                if (unlockableGuns[weaponIndex].gunName == gunToAdd)
+                if (unlockableGuns[weaponIndex].weaponName == weaponToAdd)
                 {
                     // unlock the weapon at the current weapon index
                     gunUnlocked = true;
@@ -476,10 +492,13 @@ public class PlayerController : MonoBehaviour
     }
 
 
+    // when the player walks onto a bounce pad
     public void Bounce(float bounceForce)
     {
+        // apply the bounce pad's 'bounce force'
         bounceAmount = bounceForce;
 
+        // set the 'player has bounced' flag
         bounce = true;
     }
 
