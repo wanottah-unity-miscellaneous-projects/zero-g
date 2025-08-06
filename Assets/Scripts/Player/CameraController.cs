@@ -7,6 +7,8 @@ public class CameraController : MonoBehaviour
     // enable other scripts to access this script
     public static CameraController instance;
 
+
+
     // reference to the camera's rig position transform component
     public Transform cameraRigPosition;
 

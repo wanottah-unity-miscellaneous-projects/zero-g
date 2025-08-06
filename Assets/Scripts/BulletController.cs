@@ -17,7 +17,10 @@ public class BulletController : MonoBehaviour
     public GameObject impactEffect;
 
     // the amount of damage the projectile causes
-    public int damage = 3;
+    public int damage;
+
+    // the maximum amount of damage a projectile can cause
+    private int maximumDamage = 100;
 
     // whether the projectile can damage the 'enemy' or the 'player'
     public bool damageEnemy;
@@ -65,7 +68,7 @@ public class BulletController : MonoBehaviour
         if (objectProjectileHit.gameObject.CompareTag("Headshot") && damageEnemy)
         {
             // call the method on the 'enemy health' script to damage the enemy with two times the amount of damage
-            objectProjectileHit.transform.parent.GetComponent<EnemyHealthController>().DamageEnemy(damage * 2);
+            objectProjectileHit.transform.parent.GetComponent<EnemyHealthController>().DamageEnemy(maximumDamage); // damage * 2);
 
             // display a debug message to say we got a head shot
             Debug.Log("Headshot hit");
@@ -77,7 +80,7 @@ public class BulletController : MonoBehaviour
             //Debug.Log("Hit Player at " + transform.position);
 
             // call the method on the 'player health' script to damage the player with the amount of 'damage'
-            PlayerHealthController.instance.DamagePlayer(damage);
+            ///PlayerHealthController.instance.DamagePlayer(damage);
         }
 
         // destroy the projectile

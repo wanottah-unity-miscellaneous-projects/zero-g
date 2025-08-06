@@ -9,6 +9,8 @@ public class UIController : MonoBehaviour
     // enable other scripts to access this script
     public static UIController uiController;
 
+
+
     // player stats slider bars
     public Slider healthSlider;
     public Slider staminaSlider;
@@ -20,6 +22,11 @@ public class UIController : MonoBehaviour
     public TMP_Text staminaText;
     public TMP_Text oxygenText;
     public TMP_Text ammoText;
+
+
+    // enemy stats health bar
+    public Image enemyHealthBar;
+
 
     // reference to the player's damage effect image
     public Image damageEffect;

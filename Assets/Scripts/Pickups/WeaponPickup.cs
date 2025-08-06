@@ -17,7 +17,6 @@ public class WeaponPickup : MonoBehaviour
         // if the player collides with the weapon pickup and the pickup hasn't already been collected
         if (other.CompareTag("Player") && !collected)
         {
-            Debug.Log(weaponName);
             // add the weapon
             PlayerController.instance.AddGun(weaponName);
 
