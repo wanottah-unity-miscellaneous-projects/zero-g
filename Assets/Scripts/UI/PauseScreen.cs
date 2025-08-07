@@ -18,6 +18,14 @@ public class PauseScreen : MonoBehaviour
     }
 
 
+    // options menu
+    public void OptionsMenu()
+    {
+        // call the 'options button' method in the game controller script
+        GameController.instance.OptionsButton();
+    }
+
+
     // main menu
     public void MainMenu()
     {

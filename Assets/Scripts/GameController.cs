@@ -18,6 +18,23 @@ public class GameController : MonoBehaviour
 
 
 
+    // reference to options screen
+    public GameObject optionsScreen;
+
+    // reference to the pawz screen
+    public GameObject pawzScreen;
+
+    // reference to background panel
+    public GameObject backgroundPanel;
+
+    // are we playing the game
+    public bool gamePawzed;
+
+    // console control modes
+    private int _consoleState;
+
+
+
 
     private void Awake()
     {
@@ -28,6 +45,8 @@ public class GameController : MonoBehaviour
     
     private void Start()
     {
+        Initialise();
+
         InitialiseCursor();
     }
 
@@ -44,9 +63,21 @@ public class GameController : MonoBehaviour
         // if the player presses the 'escape' key
         if (Input.GetKeyDown(KeyCode.Escape))
         {
+            // display the minimap depending upon its previous state
+            _consoleState = -_consoleState;
+
+            MinimapCameraController.instance.SetConsoleState(_consoleState);
+
             // pause / unpause the game
             PauseUnpause();
         }
+    }
+
+
+    private void Initialise()
+    {
+        // get the current state the the mini map display
+        _consoleState = MinimapCameraController.instance.consoleState;
     }
 
 
@@ -82,6 +113,12 @@ public class GameController : MonoBehaviour
         // if the pause screen is active
         if (UIController.uiController.pauseScreen.activeInHierarchy)
         {
+            // un-pawz the game
+            gamePawzed = false;
+
+            // deactivate the background
+            backgroundPanel.SetActive(false);
+
             // hide the pause screen
             UIController.uiController.pauseScreen.SetActive(false);
 
@@ -100,6 +137,15 @@ public class GameController : MonoBehaviour
         // otherwise
         else
         {
+            // pawz the game
+            gamePawzed = true;
+
+            // activate the background
+            backgroundPanel.SetActive(true);
+
+            // open the options screen
+            optionsScreen.SetActive(false);
+
             // show the pause screen
             UIController.uiController.pauseScreen.SetActive(true);
 
@@ -107,12 +153,40 @@ public class GameController : MonoBehaviour
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
 
-            // freeze the game play
-            Time.timeScale = 0f;
-
             // stop playing the player footsteps sound
             PlayerController.instance.footstepFast.Stop();
             PlayerController.instance.footstepSlow.Stop();
+        }
+    }
+
+
+
+    // if the options button is pressed
+    public void OptionsButton()
+    {
+        // if the game is pawzed
+        if (gamePawzed)
+        {
+            // then close the pawz screen
+            pawzScreen.SetActive(false);
+        }
+
+        // open the options screen
+        optionsScreen.SetActive(true);
+    }
+
+
+    // if we are closing the options screen 
+    public void CloseOptions()
+    {
+        // if the game is pawzed
+        if (gamePawzed)
+        {
+            // close the options screen
+            optionsScreen.SetActive(false);
+
+            // load the pawz screen
+            pawzScreen.SetActive(true);
         }
     }
 

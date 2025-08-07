@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class MinimapCameraController : MonoBehaviour
 {
+    // enable other scripts to access this script
+    public static MinimapCameraController instance;
+
+
+
     // reference to the player's transform 
     public Transform player;
 
@@ -27,6 +32,14 @@ public class MinimapCameraController : MonoBehaviour
     [HideInInspector] public int consoleState;
 
     #endregion
+
+
+
+
+    private void Awake()
+    {
+        instance = this;
+    }
 
 
 
@@ -64,7 +77,7 @@ public class MinimapCameraController : MonoBehaviour
 
 
     // select whether minimap is displayed
-    private void ActivateMinimap()
+    public void ActivateMinimap()
     {
         // if the player presses the 'M' key
         if (Input.GetKeyDown(KeyCode.M))
@@ -77,7 +90,7 @@ public class MinimapCameraController : MonoBehaviour
     }
 
 
-    private void SetConsoleState(int mapMode)
+    public void SetConsoleState(int mapMode)
     {
         switch (mapMode)
         {
@@ -92,6 +105,13 @@ public class MinimapCameraController : MonoBehaviour
             case CONSOLE_INACTIVE:
 
                 consoleAnimator.SetBool("consoleMode", false);
+
+                // if the game is pawzed
+                if (GameController.instance.gamePawzed)
+                {
+                    // freeze the game play
+                    Time.timeScale = 0f;
+                }
 
                 break;
         }
