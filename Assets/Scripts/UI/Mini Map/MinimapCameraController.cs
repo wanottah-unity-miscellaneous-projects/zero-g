@@ -79,6 +79,13 @@ public class MinimapCameraController : MonoBehaviour
     // select whether minimap is displayed
     public void ActivateMinimap()
     {
+        // if the game is pawsed
+        if (GameController.instance.gamePawzed)
+        {
+            // then simply return
+            return;
+        }
+
         // if the player presses the 'M' key
         if (Input.GetKeyDown(KeyCode.M))
         {

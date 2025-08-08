@@ -30,8 +30,10 @@ public class GameController : MonoBehaviour
     // are we playing the game
     public bool gamePawzed;
 
-    // console control modes
-    private int _consoleState;
+
+    // console states
+    private const int CONSOLE_ACTIVE = 1;
+    private const int CONSOLE_INACTIVE = -1;
 
 
 
@@ -45,8 +47,6 @@ public class GameController : MonoBehaviour
     
     private void Start()
     {
-        Initialise();
-
         InitialiseCursor();
     }
 
@@ -63,21 +63,13 @@ public class GameController : MonoBehaviour
         // if the player presses the 'escape' key
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            // display the minimap depending upon its previous state
-            _consoleState = -_consoleState;
-
-            MinimapCameraController.instance.SetConsoleState(_consoleState);
-
-            // pause / unpause the game
-            PauseUnpause();
+            // if the options screen is not active
+            if (!optionsScreen.activeInHierarchy)
+            {
+                // pause / unpause the game
+                PauseUnpause();
+            }
         }
-    }
-
-
-    private void Initialise()
-    {
-        // get the current state the the mini map display
-        _consoleState = MinimapCameraController.instance.consoleState;
     }
 
 
@@ -122,6 +114,9 @@ public class GameController : MonoBehaviour
             // hide the pause screen
             UIController.uiController.pauseScreen.SetActive(false);
 
+            // show the mini map
+            MinimapCameraController.instance.SetConsoleState(CONSOLE_ACTIVE);
+
             // hide and lock the cursor
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
@@ -132,11 +127,14 @@ public class GameController : MonoBehaviour
             // and play the player footsteps sound
             PlayerController.instance.footstepFast.Play();
             PlayerController.instance.footstepSlow.Play();
-        } 
-        
+        }
+
         // otherwise
         else
         {
+            // hide the mini map
+            MinimapCameraController.instance.SetConsoleState(CONSOLE_INACTIVE);
+
             // pawz the game
             gamePawzed = true;
 
@@ -164,12 +162,8 @@ public class GameController : MonoBehaviour
     // if the options button is pressed
     public void OptionsButton()
     {
-        // if the game is pawzed
-        if (gamePawzed)
-        {
-            // then close the pawz screen
-            pawzScreen.SetActive(false);
-        }
+        // then close the pawz screen
+        pawzScreen.SetActive(false);
 
         // open the options screen
         optionsScreen.SetActive(true);
@@ -179,15 +173,11 @@ public class GameController : MonoBehaviour
     // if we are closing the options screen 
     public void CloseOptions()
     {
-        // if the game is pawzed
-        if (gamePawzed)
-        {
-            // close the options screen
-            optionsScreen.SetActive(false);
+        // close the options screen
+        optionsScreen.SetActive(false);
 
-            // load the pawz screen
-            pawzScreen.SetActive(true);
-        }
+        // load the pawz screen
+        pawzScreen.SetActive(true);
     }
 
 
